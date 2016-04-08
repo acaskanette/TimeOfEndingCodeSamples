@@ -65,7 +65,8 @@ void AAbility::OnBeginOverlap_Implementation(AActor *OtherActor, UPrimitiveCompo
 
 	if (character != NULL)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString("Hit"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString("Hit"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, character->GetName());
 		character->OnAbilityOverlap(this);
 	}
 

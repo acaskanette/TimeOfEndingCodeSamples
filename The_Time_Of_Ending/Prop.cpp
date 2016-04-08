@@ -18,5 +18,12 @@ void AProp::onUse(){
 
 void AProp::OnAbilityOverlap_Implementation(AAbility *ability)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString("Taking The ability info"));
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString("Prop - OnAbilityOverlap"));
+}
+
+
+UStaticMeshComponent* AProp::GetStaticMesh_Implementation()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString("Returning Static Mesh"));
+	return nullptr;
 }

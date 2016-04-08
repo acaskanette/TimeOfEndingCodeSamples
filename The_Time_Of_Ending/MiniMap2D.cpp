@@ -18,37 +18,29 @@ void AMiniMap2D::BeginPlay() {
 	//if (GetCaptureComponent2D() != NULL)
 	//	GetCaptureComponent2D()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	
-	minimapRotation = 135.0f;
-
-	// Get reference to player for position purposes
-	playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (playerPawn)
-		mainCamera = Cast<APlayableCharacter>(playerPawn)->GetMainCamera();
-		
+	minimapRotation = 135.0f;			
 	
 }
 
 
 void AMiniMap2D::SetCenter() {
 
-	// Get player's current position
-	float cameraX = 0.0f;
-	float cameraY = 0.0f;
-	
-	if (mainCamera) {
+	// Get reference to player for position purposes
+	if (mainCamera != NULL) {
 		float cameraX = mainCamera->GetTransform().GetLocation().X;
 		float cameraY = mainCamera->GetTransform().GetLocation().Y;
+		// Set Center of the minimap picture to the player's position
+		SetActorLocation(FVector(cameraX, cameraY, SPAWN_HEIGHT));
+		SetActorRotation(FRotator(-90.f, minimapRotation, 0.f));
 	}
-	else {
+	else if (mainCamera == NULL || playerPawn == NULL && UGameplayStatics::GetRealTimeSeconds(GetWorld()) > 1.5f) {
+
 		playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-		if (playerPawn)
+		if (playerPawn !=NULL)
 			mainCamera = Cast<APlayableCharacter>(playerPawn)->GetMainCamera();
 	}
 	
-	// Set Center of the minimap picture to the player's position
-	SetActorLocation(FVector(cameraX, cameraY, SPAWN_HEIGHT));
-
-	SetActorRotation(FRotator(-90.f, minimapRotation, 0.f));
+	
 
 }
 
@@ -58,6 +50,19 @@ void AMiniMap2D::RotateMiniMap() {
 	//minimapRotation = minimapRotation % 360.0f;
 
 }
+
+APawn* AMiniMap2D::GetPlayerPawn() {
+
+	return playerPawn;
+
+}
+
+AMainCamera* AMiniMap2D::GetMainCamera() {
+
+	return mainCamera;
+
+}
+
 
 void AMiniMap2D::Tick(float DeltaTime) {
 	

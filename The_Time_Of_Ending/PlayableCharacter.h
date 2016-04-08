@@ -34,6 +34,8 @@ class THE_TIME_OF_ENDING_API APlayableCharacter : public ATOECharacter
 	APlayableCharacter();
 
 	UCameraComponent* mainCamera;
+
+	const float ABILITY_COOLDOWN = 0.4f;
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -103,6 +105,9 @@ class THE_TIME_OF_ENDING_API APlayableCharacter : public ATOECharacter
 
 	UFUNCTION()
 		void StartChargingAbilityPowerR2();
+
+	UFUNCTION(BluePrintCallable, Category = "Health")
+		virtual void OnOutOfHealth() override;
 
 	UPlayableCharacterAnimInstance *animInstance;
 

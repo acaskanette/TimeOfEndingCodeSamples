@@ -8,28 +8,28 @@
 AThe_Time_Of_EndingGameMode::AThe_Time_Of_EndingGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TimeOfEndingAssets/Blueprints/Character/Mhambi"));
-	static ConstructorHelpers::FClassFinder<APawn> ReyPawnBPClass(TEXT("/Game/TimeOfEndingAssets/Blueprints/Character/Rey"));
+	ConstructorHelpers::FObjectFinder<UClass> MhambiPawnBPClass(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Character/Mhambi.Mhambi_C'"));
+	ConstructorHelpers::FObjectFinder<UClass> ReyPawnBPClass(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Character/Rey.Rey_C'"));
 
-	ReyPawnClass = ReyPawnBPClass.Class;
+	if (ReyPawnBPClass.Object != nullptr)
+		ReyPawnClass = ReyPawnBPClass.Object;
 
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
+	if (MhambiPawnBPClass.Object != nullptr)
+		MhambiPawnClass = MhambiPawnBPClass.Object;
 
+	DefaultPawnClass = MhambiPawnClass;
 }
 
-void AThe_Time_Of_EndingGameMode::BeginPlay()
-{
+void AThe_Time_Of_EndingGameMode::BeginPlay() {
 	Super::BeginPlay();
+
+	DefaultPawnClass = MhambiPawnClass;
 
 	APlayerController* player1 = UGameplayStatics::GetPlayerController(this, 0);
 
 	DefaultPawnClass = ReyPawnClass;
 
 	FString error;
-
 	ULocalPlayer* player2 = GetGameInstance()->CreateLocalPlayer(1, error, true);
-
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, error);
 }

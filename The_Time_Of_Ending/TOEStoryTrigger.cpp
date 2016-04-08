@@ -27,21 +27,19 @@ ATOEStoryTrigger::ATOEStoryTrigger() {
 void ATOEStoryTrigger::BeginPlay() {
 	Super::BeginPlay();
 
-	FString fileContents;
-	// Load the relevant file to a string
-	fileLoaded = UTOEUtilities::LoadTextFileToString(StoryFilePath.FilePath, fileContents);
+	xmlDialogueFile = new FXmlFile(FPaths::GameContentDir() + "TimeOfEndingAssets/Dialogue/" + StoryFileName);
+	fileLoaded = xmlDialogueFile->IsValid();
 	if (fileLoaded) {
-		// Parse the string by "\n"
-		fileContents.ParseIntoArray(fileLines, TEXT("\n"));
-		// The first line is what story tags are associated with this trigger
-		fileLines[0].ParseIntoArray(unfoundStoryTags, TEXT(","));
-		// Remove the last element of the line because FUCK \n SERIOUSLY I CAN'T TRIM IT AND IT CAUSED 3 HOURS OF HEADACHE BECAUSE ONE ELEMENT OF THE UNFOUND ARRAY HAD A NEWLINE IN IT
-		unfoundStoryTags.Pop(true);
-		// Delete this line as it's no longer needed
-		fileLines.RemoveAt(0);
+		// Get the tags from the XML file and iterate through them, adding them to the search
+		FXmlNode* tags = xmlDialogueFile->GetRootNode()->FindChildNode("tags");
+		for (const FXmlNode* node = tags->GetFirstChildNode(); node != nullptr; node = node->GetNextNode())
+			unfoundStoryTags.Add(node->GetContent());
+		// Get the line nodes for later use
+		xmlDialogueLines = xmlDialogueFile->GetRootNode()->FindChildNode("lines")->GetChildrenNodes();
 
 		// Iterate through all of the story components in the scene
 		for (TObjectIterator<UTOEStoryComponent> itr; itr; ++itr) {
+			// Only iterate objects in the world (ignore editor instances)
 			if (itr->GetWorld() != GetWorld())
 				continue;
 
@@ -59,48 +57,47 @@ void ATOEStoryTrigger::BeginPlay() {
 			}
 		}
 
-		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Dialogue lines: ") + fileLines.Num());
-		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Participants: ") + taggedStoryComponents.Num());
-
-		if (unfoundStoryTags.Num() > 0) {
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Some StoryComponents weren't found by trigger: ") + unfoundStoryTags.Num());
-			// TODO: Post-spawn finding of storytags
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Warning: Don't go into that trigger, I haven't added post-spawn finding of storytags, currently only at beginplay. Might crash!"));
-		}
+		if (unfoundStoryTags.Num() > 0)
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Warning: Some StoryComponents weren't found by trigger: ") + unfoundStoryTags.Num());
 	}
 	else // if it failed to load
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Failed to load file: " + StoryFilePath.FilePath));
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Failed to load file: " + FPaths::GameContentDir() + "TimeOfEndingAssets/Dialogue/" + StoryFileName));
+}
+
+void ATOEStoryTrigger::Destroyed() {
+	Super::Destroyed();
+
+	// XML cleanup, unsure if I need to but I did use 'new' so...
+	//xmlDialogueFile->Clear();
+	//delete xmlDialogueFile;
+	//xmlDialogueFile = nullptr;
 }
 
 void ATOEStoryTrigger::OnTriggerBeginOverlap(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	// Only matters if the other actor is Rey or Mhambi
 	if (OtherActor != nullptr && OtherActor != this && Cast<APlayableCharacter>(OtherActor) != nullptr && OtherComp != nullptr && !triggered) {
 		triggered = true;
-		if (fileLoaded) {
+		if (fileLoaded)
 			RunDialogue();
-		}
 		else
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Trigger don't trigger without text to display."));
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Trigger won't trigger without text to display."));
 	}
 }
 
 void ATOEStoryTrigger::RunDialogue() {
 	// Check if past the last line, if so, dialogue is over
-	if (currentLine >= fileLines.Num()) {
+	if (currentLine >= xmlDialogueLines.Num()) {
 		currentLine = 0;
 		if (!TriggerOnlyOnce)
 			triggered = false;
 		return;
 	}
 
-	// Parse the line by "-" to get the story tag, display time, and actual dialogue
-	TArray<FString> line;
-	fileLines[currentLine].ParseIntoArray(line, TEXT("-"));
-
-	FString storyTag = line[0];
-	float timeToDisplay = FCString::Atof(*line[1]);
-	float delayToNextLine = FCString::Atof(*line[2]);
-	FString dialogue = line[3];
+	FString storyTag = xmlDialogueLines[currentLine]->GetAttribute("tag");
+	float timeToDisplay = FCString::Atof(*xmlDialogueLines[currentLine]->GetAttribute("time"));
+	float delayToNextLine = FCString::Atof(*xmlDialogueLines[currentLine]->GetAttribute("delay"));
+	bool usePortrait = xmlDialogueLines[currentLine]->GetAttribute("portrait").ToBool();
+	FString dialogue = xmlDialogueLines[currentLine]->GetContent();
 
 	// If the story tag wasn't found earlier, end the dialogue instead of attempting to show it (would crash)
 	if (taggedStoryComponents[storyTag] == nullptr) {
@@ -108,9 +105,14 @@ void ATOEStoryTrigger::RunDialogue() {
 		return;
 	}
 
-	// Tell the story component what to display
-	taggedStoryComponents[storyTag]->SetAndDisplayDialogue(dialogue, timeToDisplay, delayToNextLine, this);
+	// Clear the timer if it exists
+	if (dialogueTimer.IsValid())
+		GetWorld()->GetTimerManager().ClearTimer(dialogueTimer);
+	// Set a timer to call this function again after the current dialogue line is done
+	GetWorld()->GetTimerManager().SetTimer(dialogueTimer, this, &ATOEStoryTrigger::RunDialogue, timeToDisplay + delayToNextLine);
 
-	// Increment current line
+	// Tell the story component it has text to display and how long to display it
+	taggedStoryComponents[storyTag]->SetAndDisplayDialogue(dialogue, usePortrait, timeToDisplay);
+	// Then increment the line number so the next iteration is on the next point in dialogue
 	currentLine++;
 }

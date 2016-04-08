@@ -20,9 +20,9 @@ AAbilityManager::AAbilityManager()
 	// UNIVERSAL ABILITIES
 
 	// Melee - All Characters
-	ConstructorHelpers::FObjectFinder<UBlueprint> melee(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/Melee"));
+	ConstructorHelpers::FObjectFinder<UClass> melee(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/Melee.Melee_C'"));
 	if (melee.Succeeded()){
-		abilities.Add(FString("Melee"), melee.Object->GeneratedClass);
+		abilities.Add(FString("Melee"), melee.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
@@ -32,27 +32,27 @@ AAbilityManager::AAbilityManager()
 	// MHAMBI ABILITIES
 
 	// Tidal Uppercut - Mhambi Water
-	ConstructorHelpers::FObjectFinder<UBlueprint> tidalUppercut(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/TidalUppercut"));
+	ConstructorHelpers::FObjectFinder<UClass> tidalUppercut(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/TidalUppercut.TidalUppercut_C'"));
 	if (tidalUppercut.Succeeded()){
-		abilities.Add(FString("Mhambi Water"), tidalUppercut.Object->GeneratedClass);
+		abilities.Add(FString("Mhambi Water"), tidalUppercut.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
 		UE_LOG(YourLog, Warning, TEXT("Did not succeed"));
 
 	// Quake Strike - Mhambi Earth
-	ConstructorHelpers::FObjectFinder<UBlueprint> quakeStrike(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/Quakestrike"));
+	ConstructorHelpers::FObjectFinder<UClass> quakeStrike(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/Quakestrike.Quakestrike_C'"));
 	if (quakeStrike.Succeeded()){
-		abilities.Add(FString("Mhambi Earth"), quakeStrike.Object->GeneratedClass);
+		abilities.Add(FString("Mhambi Earth"), quakeStrike.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
 		UE_LOG(YourLog, Warning, TEXT("Did not succeed"));
 
 	// Tornado Thrust - Mhambi Wind
-	ConstructorHelpers::FObjectFinder<UBlueprint> tornadoThrust(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/TornadoThrust"));
+	ConstructorHelpers::FObjectFinder<UClass> tornadoThrust(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/TornadoThrust.TornadoThrust_C'"));
 	if (tornadoThrust.Succeeded()){
-		abilities.Add(FString("Mhambi Wind"), tornadoThrust.Object->GeneratedClass);
+		abilities.Add(FString("Mhambi Wind"), tornadoThrust.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
@@ -62,27 +62,27 @@ AAbilityManager::AAbilityManager()
 	// REY ABILITIES
 
 	// Winds of Calm - Rey Wind
-	ConstructorHelpers::FObjectFinder<UBlueprint> windsOfCalm(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/WindsOfCalm"));
+	ConstructorHelpers::FObjectFinder<UClass> windsOfCalm(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/WindsOfCalm.WindsOfCalm_C'"));
 	if (windsOfCalm.Succeeded()){
-		abilities.Add(FString("Rey Wind"), windsOfCalm.Object->GeneratedClass);
+		abilities.Add(FString("Rey Wind"), windsOfCalm.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
 		UE_LOG(YourLog, Warning, TEXT("Did not succeed"));
 
 	// Healing Rain - Rey Water
-	ConstructorHelpers::FObjectFinder<UBlueprint> healingRain(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/HealingRain"));
+	ConstructorHelpers::FObjectFinder<UClass> healingRain(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/HealingRain.HealingRain_C'"));
 	if (healingRain.Succeeded()){
-		abilities.Add(FString("Rey Water"), healingRain.Object->GeneratedClass);
+		abilities.Add(FString("Rey Water"), healingRain.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
 		UE_LOG(YourLog, Warning, TEXT("Did not succeed"));
 
 	// Mud Ball - Rey Earth
-	ConstructorHelpers::FObjectFinder<UBlueprint> mudBall(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/MudBall"));
+	ConstructorHelpers::FObjectFinder<UClass> mudBall(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/MudBall.MudBall_C'"));
 	if (mudBall.Succeeded()){
-		abilities.Add(FString("Rey Earth"), mudBall.Object->GeneratedClass);
+		abilities.Add(FString("Rey Earth"), mudBall.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
@@ -93,9 +93,9 @@ AAbilityManager::AAbilityManager()
 	// FLYING SKULL ABILITIES
 	
 	// Flame Shot - FlyingSkull Fire
-	ConstructorHelpers::FObjectFinder<UBlueprint> flameShot(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/FlameShot"));
+	ConstructorHelpers::FObjectFinder<UClass> flameShot(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/MiniFlameShot.MiniFlameShot_C'"));
 	if (flameShot.Succeeded()){
-		abilities.Add(FString("FlyingSkull Fire"), flameShot.Object->GeneratedClass);
+		abilities.Add(FString("FlyingSkull Fire"), flameShot.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
@@ -105,9 +105,9 @@ AAbilityManager::AAbilityManager()
 	// MTUMBO ABILITIES
 
 	// Flame Shot - Mtumbo Fire
-	ConstructorHelpers::FObjectFinder<UBlueprint> flameShotM(TEXT("/Game/TimeOfEndingAssets/Blueprints/Abilities/FlameShot"));
+	ConstructorHelpers::FObjectFinder<UClass> flameShotM(TEXT("Class'/Game/TimeOfEndingAssets/Blueprints/Abilities/FlameShot.FlameShot_C'"));
 	if (flameShotM.Succeeded()){
-		abilities.Add(FString("Mtumbo Fire"), flameShotM.Object->GeneratedClass);
+		abilities.Add(FString("Mtumbo Fire"), flameShotM.Object);
 		UE_LOG(YourLog, Warning, TEXT("has Succeeded"));
 	}
 	else
@@ -131,6 +131,7 @@ void AAbilityManager::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 }
+
 
 bool AAbilityManager::CastAbility(EAbilityType type, float energy, AActor* caster)
 {

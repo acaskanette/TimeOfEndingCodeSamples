@@ -20,7 +20,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Door")
 		virtual void onUse() override;
 
-	
+	virtual void ActivateProp_Implementation() override;
 	
 	
 };

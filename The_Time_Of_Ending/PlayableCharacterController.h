@@ -15,5 +15,4 @@ class THE_TIME_OF_ENDING_API APlayableCharacterController : public APlayerContro
 	
 	
 	
-	
 };

@@ -7,4 +7,17 @@ bool AActivatable::getActive(){
 	return active;
 }
 
+void AActivatable::BeginPlay()
+{
+	active = false;
+	Super::BeginPlay();
+}
 
+void AActivatable::onUse(){
+	active = !active;
+}
+
+void AActivatable::ActivateProp_Implementation()
+{
+
+}

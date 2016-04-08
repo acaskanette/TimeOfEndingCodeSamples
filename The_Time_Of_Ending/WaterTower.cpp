@@ -15,4 +15,7 @@ void AWaterTower::onUse(){
 	active = true;
 }
 
-
+void AWaterTower::ActivateProp_Implementation()
+{
+	return Super::ActivateProp_Implementation();
+}

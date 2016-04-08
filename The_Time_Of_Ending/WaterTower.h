@@ -18,7 +18,7 @@ class THE_TIME_OF_ENDING_API AWaterTower : public AActivatable
 	UFUNCTION(BlueprintCallable, Category = "RisingPlatform")
 	virtual void onUse() override;
 	
-	
+	virtual void ActivateProp_Implementation() override;
 	
 	
 };

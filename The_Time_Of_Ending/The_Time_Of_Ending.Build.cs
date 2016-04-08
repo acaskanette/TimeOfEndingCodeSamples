@@ -6,7 +6,7 @@ public class The_Time_Of_Ending : ModuleRules
 {
 	public The_Time_Of_Ending(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "XmlParser" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -38,13 +38,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "Damage", ExposeOnSpawn = true))
 		float damage;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "Damage", ExposeOnSpawn = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "element", ExposeOnSpawn = true))
 		EAbilityType element;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "Damage", ExposeOnSpawn = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "caster", ExposeOnSpawn = true))
 		AActor* caster;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "Damage", ExposeOnSpawn = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability Info", Meta = (DisplayName = "charge amount", ExposeOnSpawn = true))
 		float chargeAmount;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AbilityInfo")

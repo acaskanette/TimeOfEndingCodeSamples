@@ -19,8 +19,16 @@ private:
 public:
 	bool active;
 	
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintCallable, Category = "Activatable")
 		virtual bool getActive();
+
+	UFUNCTION(BlueprintCallable, Category = "Activatable")
+		virtual void onUse() override;
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activatable")
+		void ActivateProp();
+	virtual void ActivateProp_Implementation();
 	
 };

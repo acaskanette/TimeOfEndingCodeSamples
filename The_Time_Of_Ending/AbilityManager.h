@@ -23,5 +23,6 @@ public:
 
 	bool CastAbility(EAbilityType type, float energy, AActor* caster);
 
+	
 	TMap<FString, UClass*> abilities;
 };

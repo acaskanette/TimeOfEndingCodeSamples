@@ -29,6 +29,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RotateMiniMap")
 	void RotateMiniMap();
 
+	UFUNCTION(BlueprintCallable, Category = "Properties")
+		APawn* GetPlayerPawn();
+	
+	UFUNCTION(BlueprintCallable, Category = "Properties")
+		AMainCamera* GetMainCamera();
+
 private:
 
 	APawn* playerPawn;

@@ -29,7 +29,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 		float maxHealth;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Health")
+	UPROPERTY(BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0.0", UIMin = "0.0"))
 		float currentHealth;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Health")
@@ -56,7 +56,7 @@ public:
 		void AddHealth(float delta);
 
 	UFUNCTION(BluePrintCallable, Category = "Health")
-		void OnOutOfHealth();
+		virtual void OnOutOfHealth();
 
 	UFUNCTION(BluePrintCallable, Category = "Health")
 		void AddTempHealth(float delta, float duration);

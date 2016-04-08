@@ -15,7 +15,10 @@ void ADoor::onUse(){
 	active = !active;
 }
 
-
+void ADoor::ActivateProp_Implementation()
+{
+	return Super::ActivateProp_Implementation();
+}
 
 
 

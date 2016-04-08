@@ -6,20 +6,20 @@
 #include "The_Time_Of_EndingGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class THE_TIME_OF_ENDING_API AThe_Time_Of_EndingGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
 public:
 	AThe_Time_Of_EndingGameMode();
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classes")
-	TSubclassOf<class APawn> ReyPawnClass;
-
-	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classes")
+		UClass* MhambiPawnClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Classes")
+		UClass* ReyPawnClass;
 };

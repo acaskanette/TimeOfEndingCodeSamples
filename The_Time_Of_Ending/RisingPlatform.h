@@ -19,5 +19,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RisingPlatform")
 		virtual void onUse() override;
 	
+	virtual void ActivateProp_Implementation() override;
 	
 };

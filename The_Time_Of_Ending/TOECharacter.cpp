@@ -88,13 +88,11 @@ float ATOECharacter::GetCurrentHealth()
 
 
 void ATOECharacter::AddHealth(float delta) {
-
 	SetCurrentHealth(GetCurrentHealth() + delta);
 }
 
 void ATOECharacter::OnOutOfHealth() {
-
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString("Player Died"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString("Player Died"));
 }
 
 
@@ -115,13 +113,11 @@ void ATOECharacter::ResetTempHealth() {
 
 
 
-void ATOECharacter::SetMaxMana(float p_Mana)
-{
+void ATOECharacter::SetMaxMana(float p_Mana) {
 	maxMana = p_Mana;
 }
 
-void ATOECharacter::SetCurrentMana(float p_Mana)
-{
+void ATOECharacter::SetCurrentMana(float p_Mana) {
 	currentMana = p_Mana;
 	float max = GetMaxMana();
 
@@ -132,24 +128,19 @@ void ATOECharacter::SetCurrentMana(float p_Mana)
 
 }
 
-float ATOECharacter::GetMaxMana()
-{
+float ATOECharacter::GetMaxMana() {
 	return maxMana;
 }
 
-float ATOECharacter::GetCurrentMana()
-{
+float ATOECharacter::GetCurrentMana() {
 	return currentMana;
 }
 
 bool ATOECharacter::AtMaxMana() {
-
 	return (currentMana >= maxMana);
-
 }
 
 void ATOECharacter::AddMana(float delta) {
-
 	SetCurrentMana(GetCurrentMana() + delta);
 }
 
@@ -171,5 +162,5 @@ void ATOECharacter::StartHealthRegeneration()
 
 void ATOECharacter::OnAbilityOverlap_Implementation(AAbility *ability)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString("Taking The ability info"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString("Taking The ability info"));
 }

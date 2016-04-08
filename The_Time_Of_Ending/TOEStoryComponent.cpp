@@ -2,7 +2,6 @@
 
 #include "The_Time_Of_Ending.h"
 #include "TOEStoryComponent.h"
-
 #include "TOEStoryTrigger.h"
 
 // Sets default values for this component's properties
@@ -12,39 +11,34 @@ UTOEStoryComponent::UTOEStoryComponent() {
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// Set up the textrender for dialogue
-	DialogueRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("DialogueRender"));
-	DialogueRender->AttachParent = this;
-	DialogueRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
-	DialogueRender->bAbsoluteRotation = true; // Use world rotation so the character moving doesn't affect pointing at screen
-	DialogueRender->SetWorldSize(32.0f);
-	DialogueColor = FColor::Yellow;
+	// Get a BP class reference for the DialogueWidget and set it as the widget to display as part of the widgetcomponent
+	static ConstructorHelpers::FObjectFinder<UClass> dialogueWidgetBPClass(TEXT("Class'/Game/TimeOfEndingAssets/UI/Widgets/DialogueWidget_BP.DialogueWidget_BP_C'"));
+	if (dialogueWidgetBPClass.Object != nullptr)
+		SetWidgetClass(dialogueWidgetBPClass.Object);
 
-	//ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("Font'/Game/TimeOfEndingAssets/UI/Menus/Hoefler_Render.Hoefler_Render'"));
-	//ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Font'/Game/TimeOfEndingAssets/UI/Menus/Hoefler_Mat.Hoefler_Mat'"));
+	dialogueWidget = nullptr; // pretty sure I can't initialize it here with the above
 
-	//DialogueRender->SetFont(Font.Object);
-	//DialogueRender->SetTextMaterial(Material.Object);
-	//DialogueRender->SetWorldSize(50.0f);
-
+	// Set the size of the widget in screen space
+	SetDrawSize(FVector2D(750.0f, 300.0f));
+	// Set the widget to be displayed in screen coordinates
+	Space = EWidgetSpace::Screen;
+	// Story tag to allow triggers to send dialogue to this component
 	Tag = "None";
 
-	dialogueLine = "";
 	dialogueShowTime = 0;
-	dialogueDelayTime = 0;
 	dialogueTimer = 0;
 	showingDialogue = false;
-	currentDialogueSource = nullptr;
+
+	// Set visibility to false while not being used
+	SetVisibility(false);
 }
 
-// Called when the game starts
+// Called when the game starts or when spawned
 void UTOEStoryComponent::BeginPlay() {
 	Super::BeginPlay();
 
-	DialogueRender->SetTextRenderColor(DialogueColor);
-
-	// Set text render visibility to false when game begins so you can still see it in the editor
-	DialogueRender->SetVisibility(false);
+	dialogueWidget = Cast<UDialogueWidget>(GetUserWidgetObject());
+	dialogueWidget->InitializePortrait(Portrait, Name, NameColour, BackgroundColour, DialogueColour);
 }
 
 // Called every frame
@@ -55,42 +49,21 @@ void UTOEStoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	if (showingDialogue) {
 		dialogueTimer += DeltaTime;
 
-		if (dialogueTimer >= dialogueShowTime)
-			DialogueRender->SetVisibility(false);
-
-		// End the timer and go to the next point in the dialogue
-		if (dialogueTimer >= dialogueShowTime + dialogueDelayTime) {
+		if (dialogueTimer >= dialogueShowTime) {
+			dialogueWidget->ClearDialogue();
+			SetVisibility(false);
 			showingDialogue = false;
 			dialogueTimer = 0;
-
-			currentDialogueSource->RunDialogue();
-			//currentDialogueSource = nullptr;
 		}
-	}
-
-	if (DialogueRender->IsVisible()) {
-		// TODO: Show text over time by using dialogueLine and manipulating the text render with SetText
-
-		// Get the camera from player 1 (doesn't matter which character)
-		APlayerController* player1 = UGameplayStatics::GetPlayerController(GetOwner(), 0);
-		// Get the direction from the actor to the camera to rotate the text render
-		FVector dir = player1->PlayerCameraManager->GetCameraLocation() - GetOwner()->GetActorLocation();
-		FRotator rot = dir.Rotation();
-		DialogueRender->SetWorldRotation(rot);
 	}
 }
 
-void UTOEStoryComponent::SetAndDisplayDialogue(const FString& line, float timeToDisplay, float delayToNextLine, ATOEStoryTrigger* source) {
-	dialogueLine = line;
+void UTOEStoryComponent::SetAndDisplayDialogue(const FString& line, bool usePortrait, float timeToDisplay) {
 	dialogueShowTime = timeToDisplay;
-	dialogueDelayTime = delayToNextLine;
 
-	// Reference to the dialogue source so the trail can continue
-	currentDialogueSource = source;
+	// Send the string and whether to use the portrait to the DialogueWidget
+	dialogueWidget->SetDialogue(line, usePortrait);
 
-	GEngine->AddOnScreenDebugMessage(-1, timeToDisplay + delayToNextLine, FColor::Yellow, line);
-
-	DialogueRender->SetText(FText::FromString(dialogueLine));
-	DialogueRender->SetVisibility(true);
+	SetVisibility(true);
 	showingDialogue = true;
 }

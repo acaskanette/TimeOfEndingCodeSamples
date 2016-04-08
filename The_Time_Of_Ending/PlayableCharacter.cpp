@@ -3,6 +3,7 @@
 #include "The_Time_Of_Ending.h"
 #include "PlayableCharacter.h"
 #include "TOELevelScriptActor.h"
+#include "TOERespawner.h"
 
 
 APlayableCharacter::APlayableCharacter()
@@ -80,7 +81,7 @@ void APlayableCharacter::BeginPlay()
 	currentHealth = maxHealth;
 	maxMana = 100;
 	currentMana = maxMana;
-	manaRegenerationRate = 0.2f;
+	manaRegenerationRate = 0.4f;
 	timeSinceLastCast = 2.0f;
 }
 
@@ -88,6 +89,10 @@ void APlayableCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
+	/*if (mainCamera == NULL)
+		mainCamera = Cast<UCameraComponent>(GetWorld()->SpawnActor(AMainCamera::StaticClass())->GetComponentByClass(UCameraComponent::StaticClass()));
+*/
+
 	//if (!GetMovementComponent()->IsFalling())
 		UpdateLookDirection();
 
@@ -100,7 +105,7 @@ void APlayableCharacter::Tick(float DeltaSeconds)
 
 		FString charge = "Charge L2: ";
 		charge.AppendInt(currentChargeL2);
-		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Black, charge);
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Black, charge);
 	}
 	if (chargeR2){
 
@@ -112,7 +117,7 @@ void APlayableCharacter::Tick(float DeltaSeconds)
 
 		FString charge = "Charge R2: ";
 		charge.AppendInt(currentChargeR2);
-		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Black, charge);
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Black, charge);
 	}
 
 	currentCharge = FMath::Max(currentChargeL2, currentChargeR2);
@@ -249,7 +254,6 @@ void APlayableCharacter::UpdateLookDirection()
 
 void APlayableCharacter::Jump()
 {
-
 	Super::Jump();
 }
 
@@ -305,10 +309,11 @@ void APlayableCharacter::StartChargingAbilityPowerR2()
 
 void APlayableCharacter::CastL2Ability()
 {
-	if (currentMana > 10 + currentChargeL2 / 2)  {
+	if (currentMana > 10 + currentChargeL2 / 2 && timeSinceLastCast >= ABILITY_COOLDOWN)  {
 
 		currentMana -= 10 + currentChargeL2 / 2;
 		lastCharge = currentChargeL2;
+		timeSinceLastCast = 0.0f;
 		abilityManager->CastAbility(abilities[L2AbilityIndex], currentChargeL2, this);
 		
 
@@ -317,15 +322,16 @@ void APlayableCharacter::CastL2Ability()
 	chargeL2 = false;
 
 	HandleAttackAnimation(abilities[L2AbilityIndex]);
-	timeSinceLastCast = 0.0f;
+	
 }
 
 void APlayableCharacter::CastR2Ability()
 {
-	if (currentMana > 10 + currentChargeR2 / 2 ){
+	if (currentMana > 10 + currentChargeR2 / 2 && timeSinceLastCast >= ABILITY_COOLDOWN){
 		
 		currentMana -= 10 + currentChargeR2/2;
 		lastCharge = currentChargeR2;
+		timeSinceLastCast = 0.0f;
 		abilityManager->CastAbility(abilities[R2AbilityIndex], currentChargeR2, this);
 
 	}
@@ -333,7 +339,7 @@ void APlayableCharacter::CastR2Ability()
 	chargeR2 = false;
 
 	HandleAttackAnimation(abilities[R2AbilityIndex]);
-	timeSinceLastCast = 0.0f;
+	
 
 }
 
@@ -370,12 +376,18 @@ void APlayableCharacter::SwapR2Ability()
 	Cast<ATOELevelScriptActor>(GetLevel()->GetLevelScriptActor())->UpdateHUD(characterName, EAbilityLocation::R2, abilities[R2AbilityIndex]);
 }
 
-void APlayableCharacter::FlipCamera()
-{
+void APlayableCharacter::FlipCamera() {	
 	Cast<AMainCamera>(mainCamera->GetAttachmentRootActor())->FlipCameraAngle();
 }
 
-AMainCamera* APlayableCharacter::GetMainCamera()
-{
-	return Cast<AMainCamera>(mainCamera->GetAttachmentRootActor());
+AMainCamera* APlayableCharacter::GetMainCamera() {
+	if (mainCamera != NULL)
+		return Cast<AMainCamera>(mainCamera->GetAttachmentRootActor());
+	else
+		return NULL;
+}
+
+void APlayableCharacter::OnOutOfHealth() {
+	for (TActorIterator<ATOERespawner> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		ActorItr->RespawnPlayers();
 }

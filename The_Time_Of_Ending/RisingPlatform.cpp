@@ -15,4 +15,8 @@ void ARisingPlatform::onUse(){
 	active = !active;
 }
 
+void ARisingPlatform::ActivateProp_Implementation()
+{
+	return Super::ActivateProp_Implementation();
+}
 

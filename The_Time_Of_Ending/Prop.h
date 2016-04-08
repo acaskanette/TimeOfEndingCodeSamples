@@ -28,5 +28,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability")
 		void OnAbilityOverlap(AAbility *ability);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability")
+		UStaticMeshComponent* GetStaticMesh();
+
 	
 };
